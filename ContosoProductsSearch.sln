@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContosoProductsSearch.App", "ContosoProductsSearch.App\ContosoProductsSearch.App\ContosoProductsSearch.App.csproj", "{BE2CED7F-B1D0-4C26-804C-5BCA4E984E66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContosoProductsSearch.App", "ContosoProductsSearch.App\ContosoProductsSearch.App\ContosoProductsSearch.App.csproj", "{BE2CED7F-B1D0-4C26-804C-5BCA4E984E66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContosoProductsSearch.App.Client", "ContosoProductsSearch.App\ContosoProductsSearch.App.Client\ContosoProductsSearch.App.Client.csproj", "{68E7059C-98D0-4B4D-BEB8-AA5EB012C0DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContosoProductsSearch.App.Client", "ContosoProductsSearch.App\ContosoProductsSearch.App.Client\ContosoProductsSearch.App.Client.csproj", "{68E7059C-98D0-4B4D-BEB8-AA5EB012C0DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

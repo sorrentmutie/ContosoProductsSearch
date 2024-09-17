@@ -17,6 +17,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+builder.Services.AddAuthorization(options =>
+   options.AddPolicy("ITprezzi", policy => policy.RequireClaim("CodiceReparto", "IT-08")));
 
 builder.Services.AddAuthentication(options =>
     {
