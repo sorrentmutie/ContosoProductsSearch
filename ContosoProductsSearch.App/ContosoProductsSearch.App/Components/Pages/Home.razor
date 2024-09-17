@@ -1,0 +1,25 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+
+<AuthorizeView>
+    <Authorized>
+        @context.User?.Identity?.Name
+        <br/>
+        @context.User?.IsInRole("User")
+        @if(context.User is not null && context.User.Claims != null)
+        {
+            @foreach (var item in context.User.Claims)
+            {
+                <p> @item.Type @item.Value </p>
+            }
+        }
+       
+    </Authorized>
+
+    <NotAuthorized>
+        <p>You're not signed in.</p>
+        <p>Sign in to see your products.</p>
+    </NotAuthorized>
+</AuthorizeView>
