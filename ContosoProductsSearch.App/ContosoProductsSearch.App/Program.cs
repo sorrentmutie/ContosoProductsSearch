@@ -1,10 +1,9 @@
-using ContosoProductsSearch.App.Client.Pages;
-using ContosoProductsSearch.App.Components;
-using ContosoProductsSearch.App.Components.Account;
-using ContosoProductsSearch.App.Data;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+
+
+using ContosoProductsSearch.App.Services;
+using ContosoProductsSearch.Business.Services;
+using ContosoProductsSearch.Core.Interfaces;
+using ContosoProductsSearch.Core.Interfaces.Business;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,11 +31,20 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+var connectionNorthwindString = builder.Configuration.GetConnectionString("NorthwindConnection") ?? throw new InvalidOperationException("Connection string 'NorthwindConnection' not found.");
+builder.Services.AddDbContext<NorthwindContext>(options =>
+    options.UseSqlServer(connectionNorthwindString));
+
+
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<ICategorie, CategorieService>();
+builder.Services.AddScoped<ICategorieBusiness, CategorieBusinessService>();
+//builder.Services.AddScoped<MappingUserToCustomer>();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
