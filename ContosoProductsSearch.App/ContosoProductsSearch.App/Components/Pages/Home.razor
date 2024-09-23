@@ -1,7 +1,9 @@
 ﻿@page "/"
-
+@using Microsoft.Extensions.Caching.Memory
+@inject IMemoryCache memoryCache
 
 <PageTitle>Home</PageTitle>
+
 
 
 <AuthorizeView>
@@ -14,6 +16,7 @@
             }
         }   
 
+        <h3>Last login: @memoryCache.Get("lastLogin")</h3>
        
     </Authorized>
 
@@ -24,5 +27,11 @@
 </AuthorizeView>
 
 @code{
-    
+    protected override void OnInitialized()
+    {
+        if (memoryCache.Get("lastLogin") is null)
+        {
+            var cacheEntry = memoryCache.Set("lastLogin", DateTime.Now, TimeSpan.FromMinutes(10));
+        }
+    }
 }

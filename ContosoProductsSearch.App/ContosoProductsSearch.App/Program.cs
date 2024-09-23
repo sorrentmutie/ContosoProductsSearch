@@ -18,6 +18,8 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
 builder.Services.AddAuthorization(options =>
    options.AddPolicy("ITprezzi", policy => policy.RequireClaim("CodiceReparto", "IT-08")));
+// Register IMemoryCache
+builder.Services.AddMemoryCache();
 
 builder.Services.AddAuthentication(options =>
     {

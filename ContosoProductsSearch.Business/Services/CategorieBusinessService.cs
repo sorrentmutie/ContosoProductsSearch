@@ -1,36 +1,50 @@
 ﻿using ContosoProductsSearch.Core.DTO;
 using ContosoProductsSearch.Core.Interfaces;
 using ContosoProductsSearch.Core.Interfaces.Business;
+using ContosoProductsSearch.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace ContosoProductsSearch.Business.Services;
 
 public class CategorieBusinessService : ICategorieBusiness
 {
     private readonly ICategorie categorieService;
+    private readonly IMemoryCache cache;
 
-    public CategorieBusinessService(ICategorie categorieService)
+    public CategorieBusinessService(ICategorie categorieService, IMemoryCache cache)
     {
         this.categorieService = categorieService;
+        this.cache = cache;
     }
     public async Task<IEnumerable<CategoriaDTO>?> GetCategorieConsigliate(string IdCliente)
     {
-        var categorie = await categorieService.GetCategorieConMaggioriScorte();
-        var categorieDb = await categorieService.GetCategorieAsync(IdCliente);
+        var data = cache.Get<IEnumerable<CategoriaDTO>?>(IdCliente);
 
-        if(categorie is not null && categorieDb is not null)
+        if(data != null)
         {
-            foreach (var c in categorie)
+            return data;
+        } else
+        {
+            var categorie = await categorieService.GetCategorieConMaggioriScorte();
+            var categorieDbo = await categorieService.GetCategorieAsync(IdCliente);
+            if(categorie is not null && categorieDbo is not null)
             {
-                if(!categorieDb.Any(x => x.IdCategoria == c.IdCategoria))
+                foreach (var c in categorie)
                 {
-                    categorieDb = categorieDb.Append(c);
+                    if (!categorieDbo.Any(x => x.IdCategoria == c.IdCategoria))
+                    {
+                        categorieDbo = categorieDbo.Append(c);
+                    }
                 }
             }
-        }
-      
 
-        return categorieDb?
-            .OrderByDescending(x => x.Scorte)
-            .Select(x => new CategoriaDTO { Id = x.IdCategoria, Nome = x.NomeCategoria });
+            var dataCategories = categorieDbo?
+                .OrderByDescending(x => x.Scorte)
+                .Select(x => new CategoriaDTO { Id = x.IdCategoria, Nome = x.NomeCategoria });
+
+            cache.Set(IdCliente, dataCategories, TimeSpan.FromMinutes(5));
+
+            return dataCategories;
+        }
     }
 }
