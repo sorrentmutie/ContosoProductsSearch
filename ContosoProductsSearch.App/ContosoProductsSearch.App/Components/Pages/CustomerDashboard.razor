@@ -1,0 +1,36 @@
+﻿@page "/customerdashboard"
+@attribute [Authorize(Roles = "User")]
+@inject ICategorieBusiness categorieBusinessService
+@* @inject MappingUserToCustomer mappingUserToCustomer *@
+@inject AuthenticationStateProvider authenticationStateProvider
+
+<h3>CustomerDashboard</h3>
+
+
+ @if (list is not null)
+{
+    foreach (var i in list)
+    {
+        <p>@i.Nome</p>
+    }
+}
+
+
+@code {
+    private List<CategoriaDTO>? list = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authestate = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (!string.IsNullOrEmpty(authestate.User?.Identity?.Name))
+        {
+            //var customer = mappingUserToCustomer.GetCustomerName(authestate.User.Identity.Name);
+            var customerClaim = authestate.User.Claims.FirstOrDefault(c => c.Type == "CustomerName");
+            if (customerClaim is not null)
+            {
+                list = (await categorieBusinessService.GetCategorieConsigliate(customerClaim.Value))?.ToList();
+            }
+        }
+    }
+}

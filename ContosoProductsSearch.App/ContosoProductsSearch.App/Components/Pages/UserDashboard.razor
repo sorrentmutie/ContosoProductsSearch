@@ -1,0 +1,164 @@
+﻿@page "/user_dashboard"
+@using System.ComponentModel.DataAnnotations
+
+@inject UserManager<ApplicationUser> userManager
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+
+
+<div class="row">
+    <div class="col-md-4">
+        @* <StatusMessage Message="@message" /> *@
+        <EditForm Model="Input" method="post" OnValidSubmit="RegisterUserAsync" FormName="register">
+            <DataAnnotationsValidator />
+            <h2>Create a new account.</h2>
+            <hr />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <label for="email">Email</label>
+                <ValidationMessage For="() => Input.Email" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label for="password">Password</label>
+                <ValidationMessage For="() => Input.Password" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label for="confirm-password">Confirm Password</label>
+                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.ClaimType" class="form-control" aria-required="true" />
+                <label for="Input.ClaimType">Claim Type</label>
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.ClaimValue" class="form-control" aria-required="true" />
+                <label for="Input.ClaimValue">Claim Value</label>
+            </div>
+
+            <div>
+                <label>
+                    Admin
+
+                    <InputCheckbox @bind-Value="Input.IsAdmin" class="form-check-input" aria-required="true"/>
+                </label>
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary mt-3">Register</button>
+        </EditForm>
+    </div>   
+</div>
+
+
+@* <h3>UserDashboard</h3> *@
+<p>@message</p>
+
+@* <button class="btn btn-success" type="button" @onclick="() => AggiungiRuoloAsync()">Aggiungi Ruolo ad utente</button>
+<button class="btn btn-success" type="button" @onclick="() => AggiungiClaimAsync()">Aggiungi Claim ad utente</button>
+<button class="btn btn-success" type="button" @onclick="() => AggiungiUtenteAsync()">Aggiungi Utente</button> *@
+
+@code {
+    [SupplyParameterFromForm]
+    private MyInputModel Input { get; set; } = new();
+
+    public string message = string.Empty;
+
+    public async Task AggiungiRuoloAsync()
+    {
+        var user = await userManager.FindByEmailAsync("m.tancorre@cotrap.it");
+
+        if(user is not null)
+        {
+            // var x = await userManager.AddToRoleAsync(user, "Collaborator");
+        }
+    }
+
+    public async Task AggiungiClaimAsync()
+    {
+        var user = await userManager.FindByEmailAsync("m.tancorre@cotrap.it");
+
+        if (user is not null)
+        {
+            var x = userManager.AddClaimAsync(user, new Claim(ClaimTypes.MobilePhone, "+393655656987"));
+        }
+    }
+
+    public async Task AggiungiUtenteAsync()
+    {
+        var user = await userManager.FindByEmailAsync("pippo@gmail.com");
+
+        if(user is null)
+        {
+            var newUser = new ApplicationUser();
+            newUser.UserName = "pippo@gmail.com";
+
+            var x = await userManager.CreateAsync(newUser, "123456TTTttt&&&");
+
+            if(x.Succeeded)
+            {
+                message = "Creato utente: " + newUser.UserName;
+            }
+        }
+    }
+
+    public async Task RegisterUserAsync()
+    {
+        var user = await userManager.FindByEmailAsync(Input.Email);
+
+        if (user is null)
+        {
+            var newUser = new ApplicationUser();
+            newUser.UserName = Input.Email;
+
+            var x = await userManager.CreateAsync(newUser, Input.ConfirmPassword);
+
+            if (x.Succeeded)
+            {
+                message = "Creato utente: " + newUser.UserName;
+                var t = Input.IsAdmin ? (await userManager.AddToRoleAsync(newUser, "Admin")) : (await userManager.AddToRoleAsync(newUser, "User"));
+
+                if (!String.IsNullOrEmpty(Input.ClaimType) && !String.IsNullOrEmpty(Input.ClaimValue))
+                {
+                    await userManager.AddClaimAsync(newUser, new Claim(Input.ClaimType, Input.ClaimValue));
+                }
+
+                Input.Email = string.Empty;
+                Input.Password = string.Empty;
+                Input.ConfirmPassword = string.Empty;
+                Input.IsAdmin = false;
+                Input.ClaimType = string.Empty;
+                Input.ClaimValue = string.Empty;
+            }
+
+
+        }
+    }
+
+
+
+    private sealed class MyInputModel
+    {
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = "";
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = "";
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; } = "";
+
+        public bool IsAdmin { get; set; }
+
+        public string? ClaimType { get; set; }
+
+        public string? ClaimValue { get; set; }
+    }
+}
