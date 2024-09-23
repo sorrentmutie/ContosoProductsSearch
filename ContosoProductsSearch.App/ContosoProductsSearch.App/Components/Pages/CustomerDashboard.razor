@@ -1,23 +1,33 @@
 ﻿@page "/customerdashboard"
+@using ContosoProductsSearch.Core.ViewModel
+
 @attribute [Authorize(Roles = "User")]
 @inject ICategorieBusiness categorieBusinessService
 @* @inject MappingUserToCustomer mappingUserToCustomer *@
 @inject AuthenticationStateProvider authenticationStateProvider
 
-<h3>CustomerDashboard</h3>
 
-
- @if (list is not null)
+ @if (categorieConsigliate is not null && categorieConsigliate.Categorie is not null)
 {
-    foreach (var i in list)
+    foreach (var categoria in categorieConsigliate.Categorie)
     {
-        <p>@i.Nome</p>
+        <p>@categoria.Nome</p>
+
+        if (categoria.Prodotti is not null)
+        {
+            <h3>Potresti essere interessato a</h3>
+
+            foreach (var prodotto in categoria.Prodotti)
+            {
+                <SchedaProdotto Prodotto="prodotto" Categoria=@categoria.Nome/>
+            }
+        }
     }
 }
 
 
 @code {
-    private List<CategoriaDTO>? list = new();
+    private CategorieVM? categorieConsigliate = new();
 
 
     protected override async Task OnInitializedAsync()
@@ -25,11 +35,10 @@
         var authestate = await authenticationStateProvider.GetAuthenticationStateAsync();
         if (!string.IsNullOrEmpty(authestate.User?.Identity?.Name))
         {
-            //var customer = mappingUserToCustomer.GetCustomerName(authestate.User.Identity.Name);
             var customerClaim = authestate.User.Claims.FirstOrDefault(c => c.Type == "CustomerName");
             if (customerClaim is not null)
             {
-                list = (await categorieBusinessService.GetCategorieConsigliate(customerClaim.Value))?.ToList();
+                categorieConsigliate = (await categorieBusinessService.GetCategorieVM(customerClaim.Value));
             }
         }
     }

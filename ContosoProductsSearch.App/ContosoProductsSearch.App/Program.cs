@@ -1,6 +1,7 @@
 
 
 using ContosoProductsSearch.App.Services;
+using ContosoProductsSearch.Business.Interfaces;
 using ContosoProductsSearch.Business.Services;
 using ContosoProductsSearch.Core.Interfaces;
 using ContosoProductsSearch.Core.Interfaces.Business;
@@ -47,6 +48,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddScoped<ICategorie, CategorieService>();
 builder.Services.AddScoped<ICategorieBusiness, CategorieBusinessService>();
 //builder.Services.AddScoped<MappingUserToCustomer>();
+
+builder.Services.AddScoped<IPrezzoProdotti, PrezzoProdottiService>();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 

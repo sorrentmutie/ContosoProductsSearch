@@ -22,7 +22,7 @@ public class CategorieService : ICategorie
 
     public async Task<IEnumerable<CategoriaPerCliente>?> GetCategorieAsync(string IdCliente)
     {
-        return await context.Orders.Include(o => o.OrderDetails)
+        var categories = await context.Orders.Include(o => o.OrderDetails)
             .ThenInclude(od => od.Product)
             .ThenInclude(p => p.Category)
             .Where(o => o.CustomerId == IdCliente)
@@ -37,11 +37,31 @@ public class CategorieService : ICategorie
             })
             .Take(limiteSuProdottiConPiuScorte)
             .ToListAsync();
+
+        foreach (var category in categories)
+        {
+            var products = await context.Products
+                .Include(p => p.Supplier)
+                .Where(p => p.CategoryId == category.IdCategoria)
+                .OrderByDescending(p => p.UnitsInStock)
+                .Take(limiteSuProdottiConPiuScorte)
+                .Select(x => new ProdottoDTO { Id = x.ProductId, 
+                    Nome = x.ProductName, 
+                    NomeFornitore = x.Supplier.CompanyName, 
+                    PrezzoUnitario = x.UnitPrice,
+                    Scorte = x.UnitsInStock.HasValue ? x.UnitsInStock.Value : 0
+                })
+                .ToListAsync();
+
+            category.Prodotti = products;
+        }
+        
+        return categories;
     }
 
     public async Task<IEnumerable<CategoriaPerCliente>?> GetCategorieConMaggioriScorte()
     {
-        return await context.Orders.Include(o => o.OrderDetails)
+        var categories = await context.Orders.Include(o => o.OrderDetails)
             .ThenInclude(od => od.Product)
             .ThenInclude(p => p.Category)
             .SelectMany(o => o.OrderDetails) // Estrai OrderDetails da ogni ordine
@@ -55,5 +75,25 @@ public class CategorieService : ICategorie
             })
             .Take(limiteSuProdottiConPiuScorte)
             .ToListAsync();
+
+        foreach (var category in categories)
+        {
+            var products = await context.Products
+                .Include(p => p.Supplier)
+                .Where(p => p.CategoryId == category.IdCategoria)
+                .OrderByDescending(p => p.UnitsInStock)
+                .Take(limiteSuProdottiConPiuScorte)
+                .Select(x => new ProdottoDTO { Id = x.ProductId, 
+                    Nome = x.ProductName, 
+                    NomeFornitore = x.Supplier.CompanyName, 
+                    PrezzoUnitario = x.UnitPrice,
+                    Scorte = x.UnitsInStock.HasValue ? x.UnitsInStock.Value : 0
+                })
+                .ToListAsync();
+
+            category.Prodotti = products;
+        }
+
+        return categories;
     }
 }

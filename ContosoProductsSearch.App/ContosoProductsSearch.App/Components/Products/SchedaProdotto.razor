@@ -1,0 +1,25 @@
+﻿@using ContosoProductsSearch.Core.ViewModel
+@if (Prodotto is not null)
+{
+    
+
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <div class="alert alert-primary" role="alert">
+                @Prodotto.Prodotto?.Nome
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill @Prodotto.CssDiscountClass">
+                    @Prodotto.Sconto
+                </span>
+            </div>
+            <h5 class="card-title">@Categoria</h5>
+            <p class="card-text">@Prodotto?.Prodotto?.PrezzoUnitario</p>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter] public ProdottoVM? Prodotto { get; set; }
+    [Parameter] public string? Categoria { get; set; }
+    // [Parameter] public string? CssClass { get; set; }
+}
