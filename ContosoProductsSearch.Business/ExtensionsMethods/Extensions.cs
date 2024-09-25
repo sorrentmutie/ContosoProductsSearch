@@ -48,12 +48,59 @@ public static class Extensions
                 Nome = c.NomeCategoria,
                 Prodotti = c.Prodotti?.Select(p => new ProdottoVM
                 {
-                    Prodotto = p,
                     CssDiscountClass = prezzoProdotti.GetSconto(p.Scorte).FromDecimalToCssClass(),
                     Sconto = prezzoProdotti.GetSconto(p.Scorte).FromDecimalToDiscount()
                 })
             })
         };
+
+        return vm;
+    }
+
+
+    static public CategorieVM? ToCategorieVM(this IEnumerable<CategoriaPerCliente>? categorieDbo, IPrezzoProdotti prezzoProdotti, bool isBirthday)
+    {
+        var vm = new CategorieVM
+        {
+            Categorie = categorieDbo?.Select(c => new CategoriaVM
+            {
+                Id = c.IdCategoria,
+                Nome = c.NomeCategoria,
+                Prodotti = c.Prodotti?.Select(p => new ProdottoVM
+                {
+                    NomeProdotto = p.Nome,
+                    PrezzoOriginario = p.PrezzoUnitario,
+                    CssDiscountClass = prezzoProdotti.GetSconto(p.Scorte).FromDecimalToCssClass(),
+                    Scorte = p.Scorte,
+                    Sconto = isBirthday ? (prezzoProdotti.GetSconto(p.Scorte)+0.1m).FromDecimalToDiscount() : prezzoProdotti.GetSconto(p.Scorte).FromDecimalToDiscount()
+                })
+            })
+        };
+
+        var categorieList = vm.Categorie?.ToList();
+        
+        if (categorieList is not null)
+        {
+            foreach (var categoria in categorieList)
+            {
+                var prodottiList = categoria?.Prodotti?.ToList();
+                if (prodottiList is not null)
+                {
+                    foreach (var prodotto in prodottiList)
+                    {
+                        var sconto = isBirthday ? (prezzoProdotti.GetSconto(prodotto.Scorte) + 0.1m) : prezzoProdotti.GetSconto(prodotto.Scorte);
+                        prodotto.PrezzoScontato = prodotto.PrezzoOriginario * (1 - sconto);
+                    }
+                }
+
+                categoria!.Prodotti = prodottiList;
+            }
+        }
+
+        
+        vm.Categorie = categorieList;
+       
+
 
         return vm;
     }

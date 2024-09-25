@@ -1,11 +1,12 @@
 ﻿@page "/customerdashboard"
+@using ContosoProductsSearch.App.ExtensionMethods
 @using ContosoProductsSearch.Core.ViewModel
 
 @attribute [Authorize(Roles = "User")]
 @inject ICategorieBusiness categorieBusinessService
 @* @inject MappingUserToCustomer mappingUserToCustomer *@
 @inject AuthenticationStateProvider authenticationStateProvider
-
+@inject IConfiguration configuration
 
  @if (categorieConsigliate is not null && categorieConsigliate.Categorie is not null)
 {
@@ -28,17 +29,25 @@
 
 @code {
     private CategorieVM? categorieConsigliate = new();
-
+    private bool isBirthday;
 
     protected override async Task OnInitializedAsync()
     {
         var authestate = await authenticationStateProvider.GetAuthenticationStateAsync();
+        
+        var nomeClaim = configuration["ClaimCompleanno"];
+        if (nomeClaim is not null)
+        {
+            isBirthday = authestate.IsBirthday(nomeClaim);
+        }
+
+
         if (!string.IsNullOrEmpty(authestate.User?.Identity?.Name))
         {
             var customerClaim = authestate.User.Claims.FirstOrDefault(c => c.Type == "CustomerName");
             if (customerClaim is not null)
             {
-                categorieConsigliate = (await categorieBusinessService.GetCategorieVM(customerClaim.Value));
+                categorieConsigliate = (await categorieBusinessService.GetCategorieVM(customerClaim.Value, isBirthday));
             }
         }
     }

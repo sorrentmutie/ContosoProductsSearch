@@ -95,5 +95,32 @@ public class CategorieBusinessService : ICategorieBusiness
         }
     }
 
+    public async Task<CategorieVM?> GetCategorieVM(string IdCliente, bool isBirthday)
+    {
+        var data = cache.Get<CategorieVM?>(IdCliente);
 
+        if (data != null)
+        {
+            return data;
+        }
+        else
+        {
+            var categorieDbo = await categorieService.GetCategorieMergiate(IdCliente);
+            var categorieVM = categorieDbo.ToCategorieVM(prezzoProdotti, isBirthday);
+            cache.Set(IdCliente, categorieVM, TimeSpan.FromMinutes(500));
+            return categorieVM;
+        }
+    }
+
+    public async Task<ProdottoVM?> GetProdottoDelGiorno()
+    {
+        await Task.Delay(10);
+        return new ProdottoVM { 
+            NomeProdotto = "Prodotto del giorno",
+            PrezzoOriginario = 20,
+            PrezzoScontato = 8,
+            CssDiscountClass = "bg-danger",
+            Sconto = "40%"
+        };
+    }
 }
