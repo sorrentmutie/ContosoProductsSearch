@@ -1,5 +1,4 @@
-﻿using ContosoProductsSearch.Core.DTO;
-using ContosoProductsSearch.Core.ViewModel;
+﻿using ContosoProductsSearch.Core.ViewModel;
 
 namespace ContosoProductsSearch.Core.Interfaces.Business;
 

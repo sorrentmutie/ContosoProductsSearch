@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContosoProductsSearch.App",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContosoProductsSearch.App.Client", "ContosoProductsSearch.App\ContosoProductsSearch.App.Client\ContosoProductsSearch.App.Client.csproj", "{68E7059C-98D0-4B4D-BEB8-AA5EB012C0DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContosoProductsSearch.Data", "ContosoProductsSearch.Data\ContosoProductsSearch.Data.csproj", "{FF474A42-E764-4A3A-AE63-D7186DA08889}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContosoProductsSearch.Data", "ContosoProductsSearch.Data\ContosoProductsSearch.Data.csproj", "{FF474A42-E764-4A3A-AE63-D7186DA08889}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContosoProductsSearch.Core", "ContosoProductsSearch.Core\ContosoProductsSearch.Core.csproj", "{E9B18731-59F0-45D0-81E3-150593B1839F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContosoProductsSearch.Core", "ContosoProductsSearch.Core\ContosoProductsSearch.Core.csproj", "{E9B18731-59F0-45D0-81E3-150593B1839F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContosoProductsSearch.Business", "ContosoProductsSearch.Business\ContosoProductsSearch.Business.csproj", "{68C36C15-7830-4369-AF8A-B1062E677677}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContosoProductsSearch.Business", "ContosoProductsSearch.Business\ContosoProductsSearch.Business.csproj", "{68C36C15-7830-4369-AF8A-B1062E677677}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

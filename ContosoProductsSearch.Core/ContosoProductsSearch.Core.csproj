@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ExtentionsMethods\" />
+    <Compile Remove="ExtentionsMethods\**" />
+    <EmbeddedResource Remove="ExtentionsMethods\**" />
+    <None Remove="ExtentionsMethods\**" />
   </ItemGroup>
 
 </Project>
