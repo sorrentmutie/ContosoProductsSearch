@@ -1,10 +1,11 @@
 ﻿@page "/"
 @using Microsoft.Extensions.Caching.Memory
+@using ContosoProductsSearch.App.ExtensionMethods
 @inject IMemoryCache memoryCache
+@inject AuthenticationStateProvider authenticationStateProvider
+
 
 <PageTitle>Home</PageTitle>
-
-
 
 <AuthorizeView>
     <Authorized>
@@ -27,11 +28,19 @@
 </AuthorizeView>
 
 @code{
+
+    private bool isUserAuthenticated;
+
     protected override void OnInitialized()
     {
         if (memoryCache.Get("lastLogin") is null)
         {
             var cacheEntry = memoryCache.Set("lastLogin", DateTime.Now, TimeSpan.FromMinutes(10));
         }
+
+        
+
     }
 }
+
+

@@ -1,7 +1,6 @@
 ﻿@page "/infouser"
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject IConfiguration configuration
-
 @if (isBirthday)
 {
     <h3>Buon Compleanno!</h3>    
@@ -15,14 +14,10 @@
     protected override async Task OnInitializedAsync()
     {
         var authestate = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var customerClaimDataNascita = authestate.User.Claims.FirstOrDefault(c => c.Type == configuration["ClaimCompleanno"]);
-        if (customerClaimDataNascita is not null)
+        var nomeClaim = configuration["ClaimCompleanno"];
+        if (nomeClaim is not null)
         {
-            var dataNascita = Convert.ToDateTime(customerClaimDataNascita.Value);
-            if (DateTime.Now.Month == dataNascita.Month && DateTime.Now.Day == dataNascita.Day)
-            {
-                isBirthday = true;
-            }
-        }
+            isBirthday = authestate.IsBirthday(nomeClaim);
+        }        
     }
 }
