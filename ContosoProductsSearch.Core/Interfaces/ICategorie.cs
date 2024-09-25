@@ -8,4 +8,6 @@ public interface ICategorie
     Task<IEnumerable<CategoriaPerCliente>?> GetCategorieAsync(string IdCliente);
 
     Task<IEnumerable<CategoriaPerCliente>?> GetCategorieConMaggioriScorte();
+
+    Task<IEnumerable<CategoriaPerCliente>?> GetCategorieMergiate(string IdCliente);
 }

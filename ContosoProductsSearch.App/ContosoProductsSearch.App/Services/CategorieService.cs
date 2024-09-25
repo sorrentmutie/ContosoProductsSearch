@@ -96,4 +96,22 @@ public class CategorieService : ICategorie
 
         return categories;
     }
+
+    public async Task<IEnumerable<CategoriaPerCliente>?> GetCategorieMergiate(string IdCliente)
+    {
+        var categorie = await GetCategorieConMaggioriScorte();
+        var categorieDbo = await GetCategorieAsync(IdCliente);
+        if (categorie is not null && categorieDbo is not null)
+        {
+            foreach (var c in categorie)
+            {
+                if (!categorieDbo.Any(x => x.IdCategoria == c.IdCategoria))
+                {
+                    categorieDbo = categorieDbo.Append(c);
+                }
+            }
+        }
+
+        return categorieDbo;
+    }
 }
